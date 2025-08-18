@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام طلبات الخريجين - كلية الطب البيطري</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root {
+      --primary: #6a11cb;
+      --secondary: #2575fc;
+      --accent: #00d4ff;
+      --dark: #0f0c29;
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.25);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #6a11cb);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .main-container { max-width: 1200px; margin: 20px auto; padding: 0 20px; position: relative; z-index: 2; }
+    header {
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 12, 41, 0.3);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .logo-container { display: flex; align-items: center; gap: 15px; }
+    .logo-img { height: 50px; }
+    .logo-text .university-name { font-weight: 700; font-size: 1.2rem; }
+    .logo-text .college-name { font-size: 0.85rem; opacity: 0.9; }
+    .admin-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .admin-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .hero-section {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .hero-section h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #fff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+    }
+    .hero-section p { font-size: 1.2rem; opacity: 0.8; max-width: 700px; margin: 0 auto 30px; }
+    .options-container { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; }
+    .option-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      width: 350px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: all 0.5s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+    .option-icon { font-size: 3.5rem; margin-bottom: 15px; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .option-title { font-size: 1.5rem; margin-bottom: 12px; font-weight: 700; }
+    .option-desc { font-size: 1rem; line-height: 1.6; opacity: 0.9; }
+    .track-section {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 30px;
+      margin-top: 50px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .track-title { font-size: 1.6rem; margin-bottom: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .track-input { display: flex; gap: 10px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
+    .track-input input {
+      padding: 12px 18px; border-radius: 50px; border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.1); color: white; font-family: 'Cairo', sans-serif;
+      font-size: 1rem; flex: 1; min-width: 280px; transition: all 0.3s ease;
+    }
+    .track-input input::placeholder { color: rgba(255, 255, 255, 0.6); }
+    .track-input input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3); }
+    .track-btn {
+      padding: 12px 30px; border-radius: 50px; border: none;
+      background: linear-gradient(135deg, var(--primary), var(--accent)); color: white;
+      font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.4s ease;
+      box-shadow: 0 5px 20px rgba(106, 17, 203, 0.4); font-family: 'Cairo', sans-serif;
+    }
+    .track-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(106, 17, 203, 0.6); }
+    .alert { padding: 12px; border-radius: 8px; margin: 15px auto 0; display: inline-flex; align-items: center; gap: 10px; font-size: 0.95rem; background-color: rgba(231, 76, 60, 0.2); color: #fff; border: 1px solid rgba(231, 76, 60, 0.3); }
+    footer { text-align: center; padding: 25px 0; margin-top: 40px; color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; }
+    footer a { color: var(--accent); text-decoration: none; transition: 0.3s; }
+    footer a:hover { color: white; }
+    @media (max-width: 768px) {
+      header { flex-direction: column; gap: 10px; }
+      .hero-section h1 { font-size: 2.2rem; }
+      .hero-section p { font-size: 1rem; }
+      .option-card { width: 100%; }
+      .track-input { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img class="logo-img" src="https://th.bing.com/th/id/R.dcc3d07da16536a200182090d846b66b?rik=U7IJFK4y6CLNCA&riu=http%3a%2f%2fvet.minia.edu.eg%2fimages%2flogoooo.png&ehk=iKf9DQYI3C%2bufr44%2fis4U9aQ8aGeZyHxlhn6gj0VVwk%3d&risl=&pid=ImgRaw&r=0" alt="شعار جامعة المنيا">
+      <div class="logo-text">
+        <div class="university-name">جامعة المنيا</div>
+        <div class="college-name">كلية الطب البيطري - إدارة الخريجين</div>
+      </div>
+    </div>
+    <button class="admin-btn" onclick="goToAdmin()"><i class="fas fa-lock"></i> لوحة التحكم</button>
+  </header>
+
+  <main class="main-container">
+    <section class="hero-section">
+      <h1 class="animate__animated animate__fadeInDown">نظام طلبات الخريجين</h1>
+      <p class="animate__animated animate__fadeInUp">أهلاً بك في البوابة الرقمية لإدارة شئون الخريجين بكلية الطب البيطري. يمكنك من هنا تقديم طلباتك ومتابعتها بكل سهولة.</p>
+    </section>
+
+    <div class="options-container">
+      <div class="option-card animate__animated animate__fadeInUp" onclick="window.location.href='request.html'">
+        <div class="option-icon"><i class="fas fa-file-alt"></i></div>
+        <h3 class="option-title">تسجيل طلب جديد</h3>
+        <p class="option-desc">تقديم طلب جديد للحصول على شهادات أو مستندات من إدارة الخريجين.</p>
+      </div>
+      <div class="option-card animate__animated animate__fadeInUp animate__delay-1s" onclick="document.getElementById('trackSection').scrollIntoView({behavior: 'smooth'})">
+        <div class="option-icon"><i class="fas fa-search-location"></i></div>
+        <h3 class="option-title">متابعة طلب سابق</h3>
+        <p class="option-desc">تتبع حالة طلبك السابق ومعرفة مراحل الإنجاز والاستلام.</p>
+      </div>
+    </div>
+
+    <section class="track-section animate__animated animate__fadeInUp animate__delay-2s" id="trackSection">
+      <h3 class="track-title"><i class="fas fa-tasks"></i> متابعة حالة الطلب</h3>
+      <p>أدخل رقمك القومي المكون من 14 رقمًا لمتابعة حالة آخر طلب قدمته.</p>
+      <div class="track-input">
+        <input type="text" id="nationalIdInput" placeholder="أدخل الرقم القومي هنا...">
+        <button class="track-btn" id="trackBtn"><i class="fas fa-search"></i> تتبع</button>
+      </div>
+      <div id="trackMessage" style="display:none;"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>تصميم وتطوير: <a href="mailto:bolesgaras200000@gmail.com">المهندس بولس سمير</a></div>
+    <div style="margin-top: 10px; font-size: 0.85rem;">جميع الحقوق محفوظة &copy; 2025 - كلية الطب البيطري - جامعة المنيا</div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtLojF4wpmpDua3UZa_GzlaXhTxM2ediI",
+      authDomain: "gradu-ae76f.firebaseapp.com",
+      databaseURL: "https://gradu-ae76f-default-rtdb.firebaseio.com",
+      projectId: "gradu-ae76f"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const trackBtn = document.getElementById('trackBtn');
+    const nationalIdInput = document.getElementById('nationalIdInput');
+    const trackMessage = document.getElementById('trackMessage');
+
+    trackBtn.addEventListener('click', function() {
+      const nationalId = nationalIdInput.value.trim();
+      if (!nationalId || !/^\d{14}$/.test(nationalId)) {
+        showMessage('الرجاء إدخال رقم قومي صحيح مكون من 14 رقمًا', 'error');
+        return;
+      }
+      trackBtn.disabled = true;
+      trackBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ البحث...';
+      
+      db.ref('requests').orderByChild('nationalId').equalTo(nationalId).once('value')
+      .then(snapshot => {
+        if (snapshot.exists()) {
+          let latestRequest = null;
+          snapshot.forEach(childSnapshot => {
+            const request = childSnapshot.val();
+            if (!latestRequest || request.timestamp > latestRequest.timestamp) {
+              latestRequest = request;
+              latestRequest.id = childSnapshot.key;
+            }
+          });
+          window.location.href = `track.html?id=${latestRequest.id}`;
+        } else {
+           showMessage('لا يوجد طلبات حالية مسجلة بهذا الرقم القومي. جار البحث في الأرشيف...', 'info');
+           // Search in completed and delivered if not in current requests
+           return Promise.all([
+               db.ref('completed_requests').orderByChild('nationalId').equalTo(nationalId).once('value'),
+               db.ref('delivered_requests').orderByChild('nationalId').equalTo(nationalId).once('value')
+           ]).then(([completedSnapshot, deliveredSnapshot]) => {
+                let latestRequest = null;
+                const findLatest = (snap) => {
+                    if(!snap.exists()) return;
+                    snap.forEach(childSnapshot => {
+                        const request = childSnapshot.val();
+                        if (!latestRequest || request.timestamp > latestRequest.timestamp) {
+                            latestRequest = request;
+                            latestRequest.id = childSnapshot.key;
+                        }
+                    });
+                };
+                findLatest(completedSnapshot);
+                findLatest(deliveredSnapshot);
+                
+                if(latestRequest) {
+                    window.location.href = `track.html?id=${latestRequest.id}`;
+                } else {
+                    showMessage('لا يوجد أي طلبات مسجلة بهذا الرقم القومي.', 'error');
+                    resetTrackButton();
+                }
+           });
+        }
+      }).catch(error => {
+        console.error(error);
+        showMessage('حدث خطأ أثناء البحث عن الطلب', 'error');
+        resetTrackButton();
+      });
+    });
+
+    nationalIdInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') { trackBtn.click(); }
+    });
+    
+    function resetTrackButton() {
+        trackBtn.disabled = false;
+        trackBtn.innerHTML = '<i class="fas fa-search"></i> تتبع';
+    }
+
+    function showMessage(message, type) {
+      trackMessage.innerHTML = `<div class="alert"><i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}</div>`;
+      trackMessage.style.display = 'block';
+      if(type === 'error') {
+          setTimeout(() => { trackMessage.style.display = 'none'; }, 5000);
+      }
+    }
+
+    function goToAdmin() {
+      const pass = prompt("من فضلك أدخل كلمة المرور للدخول للإدارة:");
+      if (pass === "8520") { window.location.href = "admin.html"; }
+      else if (pass !== null) { alert("كلمة المرور غير صحيحة"); }
+    }
+  </script>
+</body>
+</html>

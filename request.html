@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>نظام طلبات الخريجين — تقديم الطلب</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  
+  <style>
+    :root {
+      --primary: #6a11cb; --secondary: #2575fc; --accent: #00d4ff;
+      --success: #2ecc71; --danger: #e74c3c; --warning: #f39c12;
+      --dark: #2c3e50; --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2); --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.25);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite; color: white; min-height: 100vh;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+    }
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; padding: 15px; text-align: center; box-shadow: var(--shadow);
+    }
+    header .logo-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
+    header img { height: 60px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); }
+    header .university-name { font-weight: 800; font-size: 1.6rem; }
+    header .college-name { font-size: 1rem; opacity: 0.9; }
+    .wrap { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+    .card {
+      background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border);
+      border-radius: 20px; padding: 30px; box-shadow: var(--shadow); margin-bottom: 30px;
+    }
+    h2 {
+      margin: 0 0 20px; color: white; font-weight: 800; font-size: 2rem; text-align: center;
+      background: linear-gradient(to right, #ffffff, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .small-info { font-size: 1rem; color: rgba(255, 255, 255, 0.8); text-align: center; margin-bottom: 25px; }
+    form .row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+    .col { flex: 1; min-width: 250px; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; }
+    input, select {
+      width: 100%; padding: 14px; border: 1px solid var(--glass-border); border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1); color: white; font-family: 'Cairo', sans-serif;
+      font-size: 1rem; transition: all 0.3s ease;
+    }
+    select option { background: var(--dark); color: white; }
+    input::placeholder { color: rgba(255, 255, 255, 0.6); }
+    input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3); }
+    .services-section { margin: 30px 0; }
+    .services-list { margin-top: 15px; max-height: 400px; overflow-y: auto; padding-right: 10px; }
+    .service-item { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: rgba(255, 255, 255, 0.08); border-radius: 12px; margin-bottom: 12px; transition: all 0.3s ease; border: 1px solid var(--glass-border); }
+    .service-item:hover { background: rgba(255, 255, 255, 0.15); transform: translateX(-5px); }
+    .service-item input[type='checkbox'] { margin-left: 15px; width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent); }
+    .service-item label { margin: 0; cursor: pointer; font-weight: 600; color: white; flex: 1; }
+    .service-item .small { margin: 0; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; }
+    .service-details { display: none; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; margin-top: 12px; border: 1px solid var(--glass-border); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+      padding: 14px 30px; border-radius: 50px; border: none; font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;
+      font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: all 0.4s ease;
+      box-shadow: 0 5px 20px rgba(106, 17, 203, 0.4);
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(106, 17, 203, 0.6); }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+    .form-message { padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .form-message.error { background: rgba(231, 76, 60, 0.2); border-left: 4px solid var(--danger); }
+    #modalOverlay, #confirmModal { position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.8); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(5px); }
+    #modalContent, #confirmContent { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; box-shadow: var(--shadow-hover); color: white; }
+    #modalTitle, #confirmTitle { font-size: 1.8rem; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    #modalTitle { color: var(--success); }
+    #confirmTitle { color: var(--accent); }
+    #deliveryDetails { font-size: 1.2rem; margin-bottom: 30px; line-height: 1.6; }
+    #confirmDetails { font-size: 1.1rem; margin-bottom: 25px; line-height: 1.6; text-align: right; }
+    .confirm-btns { display: flex; gap: 15px; justify-content: center; }
+    .confirm-btn { padding: 12px 25px; border-radius: 50px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Cairo', sans-serif; min-width: 120px; }
+    #confirmSubmitBtn { background: linear-gradient(135deg, var(--success), #27ae60); color: white; }
+    #confirmCancelBtn { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid var(--glass-border); }
+    footer { text-align: center; padding: 30px 0; color: rgba(255, 255, 255, 0.7); }
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .required-field::after { content: " *"; color: var(--warning); }
+    ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    @media (max-width: 768px) { .row { flex-direction: column; gap: 15px; } .confirm-btns {flex-direction: column;} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo-container">
+    <img src="https://th.bing.com/th/id/R.dcc3d07da16536a200182090d846b66b?rik=U7IJFK4y6CLNCA&riu=http%3a%2f%2fvet.minia.edu.eg%2fimages%2flogoooo.png&ehk=iKf9DQYI3C%2bufr44%2fis4U9aQ8aGeZyHxlhn6gj0VVwk%3d&risl=&pid=ImgRaw&r=0" alt="شعار جامعة المنيا" />
+    <div>
+      <div class="university-name">جامعة المنيا</div>
+      <div class="college-name">كلية الطب البيطري — نظام طلبات الخريجين</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="sectionSubmit" class="card animate__animated animate__fadeInUp">
+    <h2><i class="fas fa-file-contract"></i> نموذج تقديم الطلبات</h2>
+    <p class="small-info">املأ البيانات المطلوبة وارفع إيصال الدفع لكل خدمة.</p>
+
+    <form id="requestForm" novalidate>
+      <div class="row">
+        <div class="col">
+          <label for="fullName" class="required-field"><i class="fas fa-user"></i> الاسم الكامل</label>
+          <input id="fullName" type="text" required placeholder="أدخل الاسم الكامل كما هو بالبطاقة" />
+        </div>
+        <div class="col">
+          <label for="nationalId" class="required-field"><i class="fas fa-id-card"></i> الرقم القومي</label>
+          <input id="nationalId" type="text" required placeholder="أدخل الرقم القومي 14 رقم" pattern="\d{14}" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="graduationYear" class="required-field"><i class="fas fa-graduation-cap"></i> سنة التخرج</label>
+          <select id="graduationYear" required>
+            <option value="">اختر سنة التخرج</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="phoneNumber" class="required-field"><i class="fas fa-phone"></i> رقم الهاتف</label>
+          <input id="phoneNumber" type="tel" required placeholder="مثال: 01012345678" pattern="^01[0-2,5]\d{8}$" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="whatsapp"><i class="fab fa-whatsapp"></i> واتساب (اختياري)</label>
+          <input id="whatsapp" type="tel" placeholder="رقم واتساب للتواصل" pattern="^01[0-2,5]\d{8}$" />
+        </div>
+        <div class="col">
+          <label for="email"><i class="fas fa-envelope"></i> البريد الإلكتروني (اختياري)</label>
+          <input id="email" type="email" placeholder="example@email.com" />
+        </div>
+      </div>
+
+      <div class="services-section">
+        <h3><i class="fas fa-list-check"></i> اختر الخدمات المطلوبة</h3>
+        <div id="servicesContainer" class="services-list">
+          <div class="service-item" style="justify-content: center;"><i class="fas fa-spinner fa-spin"></i><span style="margin-right: 10px;">جارٍ تحميل الخدمات...</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 30px">
+        <button class="btn" id="submitBtn" type="button"><i class="fas fa-paper-plane"></i> إرسال الطلب</button>
+      </div>
+      <div id="formMessage" style="display: none"></div>
+    </form>
+  </section>
+</main>
+
+<div id="modalOverlay">
+  <div id="modalContent">
+    <h3 id="modalTitle"><i class="fas fa-check-circle"></i> تم إرسال الطلب بنجاح</h3>
+    <div id="deliveryDetails"></div>
+    <button id="modalCloseBtn" class="btn" style="background: linear-gradient(135deg, var(--success), #27ae60);"><i class="fas fa-home"></i> العودة للرئيسية</button>
+  </div>
+</div>
+
+<div id="confirmModal">
+  <div id="confirmContent">
+    <h3 id="confirmTitle"><i class="fas fa-clipboard-check"></i> مراجعة وتأكيد الطلب</h3>
+    <div id="confirmDetails"></div>
+    <div class="confirm-btns">
+      <button id="confirmSubmitBtn" class="confirm-btn"><i class="fas fa-check"></i> تأكيد وإرسال</button>
+      <button id="confirmCancelBtn" class="confirm-btn"><i class="fas fa-edit"></i> تعديل الطلب</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>تصميم وتطوير: <a href="mailto:bolesgaras200000@gmail.com">المهندس بولس سمير</a></div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getDatabase, ref, get, push, set } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+  
+  const firebaseConfig = {
+    apiKey: 'AIzaSyBtLojF4wpmpDua3UZa_GzlaXhTxM2ediI', authDomain: 'gradu-ae76f.firebaseapp.com',
+    databaseURL: 'https://gradu-ae76f-default-rtdb.firebaseio.com', projectId: 'gradu-ae76f',
+    storageBucket: 'gradu-ae76f.appspot.com', appId: '1:564230686481:web:4f219e913ee1185ba32eb0',
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  
+  const graduationYearSelect = document.getElementById('graduationYear');
+  const servicesContainer = document.getElementById('servicesContainer');
+  const requestForm = document.getElementById('requestForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const formMessage = document.getElementById('formMessage');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const deliveryDetails = document.getElementById('deliveryDetails');
+  const modalCloseBtn = document.getElementById('modalCloseBtn');
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmDetails = document.getElementById('confirmDetails');
+  const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+  const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+
+  (function fillYears() {
+    for (let y = new Date().getFullYear(); y >= 2014; y--) {
+      graduationYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+    }
+  })();
+
+  async function loadServices() {
+    try {
+      const snap = await get(ref(db, 'services'));
+      servicesContainer.innerHTML = '';
+      if (!snap.exists()) {
+        servicesContainer.innerHTML = '<div class="service-item" style="justify-content:center;">لا توجد خدمات متاحة حالياً.</div>';
+        return;
+      }
+      const services = snap.val();
+      Object.keys(services).forEach(key => {
+        const s = services[key];
+        if (s.active) {
+          const itemHTML = `
+            <div class="service-item">
+              <div style="display:flex;align-items:center; flex:1;">
+                <input type="checkbox" id="svc_${key}" class="svcCheck" data-name="${s.name}">
+                <label for="svc_${key}" style="margin-right:12px">
+                  ${s.name} ${s.price ? `<span style="color:var(--accent)">- ${s.price} ج.م</span>` : ''}
+                </label>
+              </div>
+              <div class="small">${s.note || ''}</div>
+            </div>
+            <div class="service-details" id="details_${key}">
+              <div class="row">
+                <div class="col"><label><i class="fas fa-sort-numeric-up"></i> الكمية</label><input type="number" class="qty" value="1" min="1" style="padding:12px"></div>
+                <div class="col"><label class="required-field"><i class="fas fa-receipt"></i> إيصال الدفع</label><input type="file" class="receipt" accept="image/*" style="padding:8px"></div>
+              </div>
+            </div>`;
+          servicesContainer.insertAdjacentHTML('beforeend', itemHTML);
+        }
+      });
+      document.querySelectorAll('.svcCheck').forEach(chk => {
+        chk.addEventListener('change', (e) => {
+          const detailsEl = document.getElementById(`details_${e.target.id.split('_')[1]}`);
+          detailsEl.style.display = e.target.checked ? 'block' : 'none';
+          detailsEl.querySelector('.receipt').required = e.target.checked;
+        });
+      });
+    } catch (err) {
+      console.error(err);
+      servicesContainer.innerHTML = '<div class="service-item" style="justify-content:center;color:var(--danger)">خطأ في تحميل الخدمات.</div>';
+    }
+  }
+
+  async function getDeliveryText() {
+    try {
+      const settingsSnap = await get(ref(db, 'settings'));
+      const settings = settingsSnap.val() || { deliveryDays: 15, pickupTime: '09:00' };
+      const deliveryDate = new Date();
+      deliveryDate.setDate(deliveryDate.getDate() + (settings.deliveryDays || 15));
+      const dateStr = deliveryDate.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      return `موعد الاستلام المتوقع: <strong>${dateStr}</strong><br>بداية من الساعة: <strong>${settings.pickupTime || '09:00 ص'}</strong><br><br><u>مكان الاستلام:</u><br>إدارة شئون الخريجين - كلية الطب البيطري.`;
+    } catch (e) {
+      return 'سيتم إعلامك بموعد الاستلام عبر الهاتف أو البريد الإلكتروني.';
+    }
+  }
+
+  modalCloseBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
+
+  async function uploadToCloudinary(file) {
+    const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dk0abpjlw/image/upload';
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'ml_default');
+    const res = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('فشل رفع الملف');
+    return (await res.json()).secure_url;
+  }
+
+  function showConfirmation(servicesArr) {
+    let html = `
+      <div style="text-align: right; margin-bottom: 20px;">
+        <p><strong>الاسم:</strong> ${document.getElementById('fullName').value}</p>
+        <p><strong>الرقم القومي:</strong> ${document.getElementById('nationalId').value}</p>
+        <p><strong>سنة التخرج:</strong> ${document.getElementById('graduationYear').value}</p>
+      </div>
+      <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <h4 style="margin-top: 0; margin-bottom: 10px; color: var(--accent);">الخدمات المطلوبة:</h4>
+        <ul style="padding-right: 20px;">
+          ${servicesArr.map(s => `<li>${s.name} (الكمية: ${s.quantity})</li>`).join('')}
+        </ul>
+      </div>
+      <p style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> يرجى مراجعة البيانات جيداً قبل التأكيد النهائي.</p>`;
+    confirmDetails.innerHTML = html;
+    confirmModal.style.display = 'flex';
+  }
+
+  async function submitConfirmedRequest() {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span> جارٍ الإرسال...';
+    confirmModal.style.display = 'none';
+
+    try {
+      const servicesArr = [];
+      const checked = document.querySelectorAll('.svcCheck:checked');
+      for (const cb of checked) {
+        const id = cb.id.split('_')[1];
+        const det = document.getElementById(`details_${id}`);
+        const file = det.querySelector('.receipt').files[0];
+        const url = await uploadToCloudinary(file);
+        servicesArr.push({ 
+          id, name: cb.dataset.name, 
+          quantity: Number(det.querySelector('.qty').value), 
+          receiptUrl: url 
+        });
+      }
+      const newRef = push(ref(db, 'requests'));
+      const payload = {
+        name: document.getElementById('fullName').value.trim(),
+        nationalId: document.getElementById('nationalId').value.trim(),
+        graduationYear: document.getElementById('graduationYear').value,
+        phone: document.getElementById('phoneNumber').value.trim(),
+        whatsapp: document.getElementById('whatsapp').value.trim() || null,
+        email: document.getElementById('email').value.trim().toLowerCase() || null,
+        services: servicesArr,
+        timestamp: Date.now(),
+        status: 'pending',
+      };
+      await set(newRef, payload);
+      const deliveryText = await getDeliveryText();
+      deliveryDetails.innerHTML = deliveryText;
+      modalOverlay.style.display = 'flex';
+      requestForm.reset();
+      document.querySelectorAll('.service-details').forEach(d => d.style.display = 'none');
+    } catch (err) {
+      showMessage('حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الطلب';
+    }
+  }
+  
+  function showMessage(msg, type) {
+      formMessage.innerHTML = `<div class="form-message ${type}"><i class="fas fa-exclamation-circle"></i> ${msg}</div>`;
+      formMessage.style.display = 'block';
+      formMessage.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => { formMessage.style.display = 'none'; }, 6000);
+  }
+
+  submitBtn.addEventListener('click', () => {
+    if (!requestForm.checkValidity()) {
+      showMessage('الرجاء ملء جميع الحقول المطلوبة (*) بشكل صحيح.', 'error');
+      requestForm.reportValidity();
+      return;
+    }
+    const checked = document.querySelectorAll('.svcCheck:checked');
+    if (checked.length === 0) {
+      showMessage('يجب اختيار خدمة واحدة على الأقل.', 'error');
+      return;
+    }
+    let receiptMissing = false;
+    const servicesToConfirm = [];
+    checked.forEach(cb => {
+        const id = cb.id.split('_')[1];
+        const det = document.getElementById(`details_${id}`);
+        if (!det.querySelector('.receipt').files[0]) {
+            receiptMissing = true;
+        }
+        servicesToConfirm.push({
+            name: cb.dataset.name,
+            quantity: det.querySelector('.qty').value
+        });
+    });
+    if (receiptMissing) {
+      showMessage('الرجاء رفع إيصال الدفع لكل خدمة تم اختيارها.', 'error');
+      return;
+    }
+    showConfirmation(servicesToConfirm);
+  });
+  
+  confirmSubmitBtn.addEventListener('click', submitConfirmedRequest);
+  confirmCancelBtn.addEventListener('click', () => { confirmModal.style.display = 'none'; });
+
+  loadServices();
+</script>
+</body>
+</html>

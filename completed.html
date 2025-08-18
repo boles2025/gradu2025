@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الطلبات المكتملة والتسليم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb; --secondary: #2575fc; --accent: #00d4ff;
+            --success: #2ecc71; --danger: #e74c3c;
+            --dark: #2c3e50; --shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        body { font-family: 'Cairo', sans-serif; margin: 0; background-color: #f4f7fc; }
+        .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px; text-align: center; }
+        .nav { background-color: #ffffff; padding: 10px; display: flex; justify-content: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .nav a { color: #333; text-decoration: none; padding: 8px 15px; border-radius: 50px; transition: all 0.3s; font-weight: 600; }
+        .nav a:hover { background-color: #f0f0f0; color: var(--primary); }
+        .nav a.active { background: var(--primary); color: white; }
+        .container { max-width: 1400px; margin: 20px auto; padding: 0 15px; }
+        .card { background-color: white; border-radius: 12px; box-shadow: var(--shadow); padding: 25px; margin-bottom: 25px; }
+        .card-title { color: var(--primary); margin: 0 0 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; vertical-align: middle; }
+        th { background-color: #f8f9fa; font-weight: 700; color: #333; }
+        tr:hover { background-color: #f8f9fa; }
+        .btn { padding: 8px 15px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-danger { background-color: var(--danger); color: white; }
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--accent), #333, var(--primary), var(--secondary));
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; 
+            animation: gradient-animation 5s ease infinite;
+            margin-top: 40px;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>الطلبات المكتملة والتسليم</h1></div>
+    
+    <div class="nav">
+        <a href="admin.html"><i class="fas fa-list"></i> الطلبات الحالية</a>
+        <a href="completed.html" class="active"><i class="fas fa-check-circle"></i> المكتملة والتسليم</a>
+        <a href="settings.html"><i class="fas fa-cog"></i> الإعدادات</a>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-check-double" style="color: var(--success);"></i> طلبات جاهزة للتسليم</h2>
+            <div style="overflow-x: auto;">
+                <table id="completedTable">
+                    <thead><tr><th>رقم الطلب</th><th>اسم الخريج</th><th>الرقم القومي</th><th>تاريخ الإنجاز (الطباعة)</th><th>إجراء</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-handshake" style="color: var(--dark);"></i> طلبات تم تسليمها (أرشيف)</h2>
+            <div style="overflow-x: auto;">
+                <table id="deliveredTable">
+                    <thead><tr><th>رقم الطلب</th><th>اسم الخريج</th><th>الرقم القومي</th><th>تاريخ التسليم</th><th>إجراء</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer> تصميم وتطوير: المهندس بولس سمير </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtLojF4wpmpDua3UZa_GzlaXhTxM2ediI",
+            authDomain: "gradu-ae76f.firebaseapp.com",
+            databaseURL: "https://gradu-ae76f-default-rtdb.firebaseio.com",
+            projectId: "gradu-ae76f"
+        };
+        
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        const completedTableBody = document.querySelector('#completedTable tbody');
+        const deliveredTableBody = document.querySelector('#deliveredTable tbody');
+
+        function renderTable(tableBody, requests, type) {
+            tableBody.innerHTML = requests.length === 0 ? `<tr><td colspan="5" style="text-align: center; padding: 1rem;">لا توجد طلبات في هذه القائمة حالياً.</td></tr>` : '';
+            requests.forEach(req => {
+                const date = type === 'completed' ? req.completedAt : req.deliveredAt;
+                const dateStr = date ? new Date(date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
+                const actionBtn = type === 'completed' ? 
+                    `<button class="btn btn-success deliver-btn" data-id="${req.id}"><i class="fas fa-handshake"></i> تم التسليم</button>` :
+                    `<button class="btn btn-danger delete-btn" data-id="${req.id}" title="الحذف من الأرشيف نهائياً"><i class="fas fa-trash"></i> حذف</button>`;
+                
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${req.id.substring(1, 8)}</td>
+                        <td>${req.name || 'غير متوفر'}</td>
+                        <td>${req.nationalId || 'N/A'}</td>
+                        <td>${dateStr}</td>
+                        <td>${actionBtn}</td>
+                    </tr>`;
+            });
+            attachActionListeners();
+        }
+
+        function attachActionListeners() {
+            document.querySelectorAll('.deliver-btn').forEach(btn => btn.addEventListener('click', e => deliverRequest(e.currentTarget.dataset.id)));
+            document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', e => deleteDeliveredRequest(e.currentTarget.dataset.id)));
+        }
+
+        async function deliverRequest(id) {
+            if (!confirm("هل أنت متأكد من تسليم هذا الطلب للخريج؟ سيتم نقله إلى الأرشيف.")) return;
+            const requestRef = db.ref(`completed_requests/${id}`);
+            const snapshot = await requestRef.once('value');
+            if (snapshot.exists()) {
+                const requestData = snapshot.val();
+                requestData.deliveredAt = Date.now();
+                await db.ref(`delivered_requests/${id}`).set(requestData);
+                await requestRef.remove();
+                alert("تم تسجيل تسليم الطلب بنجاح.");
+            }
+        }
+        
+        async function deleteDeliveredRequest(id) {
+            if (!confirm("هل أنت متأكد من حذف هذا السجل نهائياً من الأرشيف؟ لا يمكن التراجع عن هذا الإجراء.")) return;
+            await db.ref(`delivered_requests/${id}`).remove();
+            alert("تم حذف السجل نهائياً.");
+        }
+
+        db.ref('completed_requests').on('value', snapshot => {
+            const requests = [];
+            if (snapshot.exists()) snapshot.forEach(child => requests.push({ id: child.key, ...child.val() }));
+            renderTable(completedTableBody, requests.sort((a,b) => b.completedAt - a.completedAt), 'completed');
+        });
+
+        db.ref('delivered_requests').on('value', snapshot => {
+            const requests = [];
+            if (snapshot.exists()) snapshot.forEach(child => requests.push({ id: child.key, ...child.val() }));
+            renderTable(deliveredTableBody, requests.sort((a,b) => b.deliveredAt - a.deliveredAt), 'delivered');
+        });
+    </script>
+</body>
+</html>

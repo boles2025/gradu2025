@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متابعة الطلب - كلية الطب البيطري</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  
+  <style>
+    :root {
+      --primary: #6a11cb; --secondary: #2575fc; --accent: #00d4ff;
+      --success: #2ecc71; --warning: #f39c12; --dark: #0f0c29;
+      --glass-bg: rgba(255, 255, 255, 0.1); --glass-border: rgba(255, 255, 255, 0.2);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+      background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: white;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+    }
+    header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px; text-align: center; box-shadow: var(--shadow); }
+    .logo-container { display: flex; align-items: center; justify-content: center; gap: 15px; }
+    .logo-img { height: 60px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); }
+    .university-name { font-weight: 800; font-size: 1.6rem; }
+    .college-name { font-size: 1rem; opacity: 0.9; }
+    .main-container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+    .track-card {
+      background: var(--glass-bg); backdrop-filter: blur(14px); border: 1px solid var(--glass-border);
+      border-radius: 22px; padding: 35px; box-shadow: var(--shadow);
+    }
+    .track-title { font-size: 1.9rem; margin-bottom: 25px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--accent); }
+    .request-info { text-align: right; margin-bottom: 35px; background: rgba(255,255,255,0.08); padding: 20px; border-radius: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;}
+    .request-info p { margin: 0; }
+    .request-info strong { color: var(--accent); opacity: 0.9; }
+    
+    .timeline { position: relative; padding: 20px 0; }
+    .timeline::before { content: ''; position: absolute; top: 0; bottom: 0; right: 20px; width: 4px; background: var(--glass-border); border-radius: 2px; }
+    .timeline-item { position: relative; padding-right: 60px; margin-bottom: 30px; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-icon {
+      position: absolute; top: 0; right: 0; width: 44px; height: 44px;
+      border-radius: 50%; background: var(--dark); border: 3px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+      transition: all 0.4s ease;
+    }
+    .timeline-content { padding: 15px 20px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+    .timeline-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 5px; }
+    .timeline-date { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); }
+
+    /* Timeline Item Statuses */
+    .timeline-item.completed .timeline-icon { background: var(--success); border-color: var(--success); color: white; }
+    .timeline-item.completed .timeline::before { background: var(--success); /* This needs to be on the parent */}
+    .timeline-item.current .timeline-icon { background: var(--warning); border-color: var(--warning); color: white; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); } }
+
+    .back-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; border-radius: 50px; border: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.4s; box-shadow: 0 6px 18px rgba(106,17,203,0.4); margin-top: 30px; }
+    .back-btn:hover { transform: translateY(-4px) scale(1.02); }
+    .alert-error { padding: 15px; border-radius: 8px; background-color: rgba(231,76,60,0.25); border: 1px solid rgba(231,76,60,0.4); display: flex; align-items: center; gap: 10px; }
+    footer { text-align: center; padding: 30px 0; margin-top: 30px; color: rgba(255, 255, 255, 0.7); }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img class="logo-img" src="https://th.bing.com/th/id/R.dcc3d07da16536a200182090d846b66b?rik=U7IJFK4y6CLNCA&riu=http%3a%2f%2fvet.minia.edu.eg%2fimages%2flogoooo.png&ehk=iKf9DQYI3C%2bufr44%2fis4U9aQ8aGeZyHxlhn6gj0VVwk%3d&risl=&pid=ImgRaw&r=0" alt="شعار جامعة المنيا" />
+      <div>
+        <div class="university-name">جامعة المنيا</div>
+        <div class="college-name">كلية الطب البيطري - متابعة الطلب</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div class="track-card animate__animated animate__fadeInUp">
+      <div id="loadingMessage" style="text-align: center; padding: 20px;">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <p style="margin-top: 10px;">جارٍ تحميل بيانات الطلب...</p>
+      </div>
+      
+      <div id="requestContainer" style="display: none;">
+        <h2 class="track-title"><i class="fas fa-tasks"></i> مراحل تقدم الطلب</h2>
+        <div class="request-info" id="requestInfo"></div>
+        <div class="timeline" id="requestTimeline"></div>
+        <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-right"></i> العودة للصفحة الرئيسية</button>
+      </div>
+      
+      <div id="errorMessage" class="alert-error" style="display: none;">
+        <i class="fas fa-exclamation-circle"></i>
+        <span id="errorText"></span>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div>تصميم وتطوير: <a href="mailto:bolesgaras200000@gmail.com">المهندس بولس سمير</a></div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBtLojF4wpmpDua3UZa_GzlaXhTxM2ediI",
+      authDomain: "gradu-ae76f.firebaseapp.com",
+      databaseURL: "https://gradu-ae76f-default-rtdb.firebaseio.com",
+      projectId: "gradu-ae76f"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const loadingMessage = document.getElementById('loadingMessage');
+    const requestContainer = document.getElementById('requestContainer');
+    const requestInfo = document.getElementById('requestInfo');
+    const requestTimeline = document.getElementById('requestTimeline');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestId = urlParams.get('id');
+      if (!requestId) { showError('لم يتم تحديد رقم الطلب.'); return; }
+
+      try {
+        const paths = [`requests/${requestId}`, `completed_requests/${requestId}`, `delivered_requests/${requestId}`];
+        let requestData = null;
+        for (const path of paths) {
+          const snapshot = await db.ref(path).once('value');
+          if (snapshot.exists()) {
+            requestData = snapshot.val();
+            break;
+          }
+        }
+        
+        if (!requestData) { showError('لا يوجد طلب بهذا الرقم.'); return; }
+        
+        const settingsSnap = await db.ref('settings').once('value');
+        const settings = settingsSnap.val() || { deliveryDays: 15, pickupTime: '09:00' };
+
+        renderRequestInfo(requestData);
+        renderTimeline(requestData, settings);
+
+        loadingMessage.style.display = 'none';
+        requestContainer.style.display = 'block';
+      } catch (error) {
+        console.error(error);
+        showError('حدث خطأ أثناء جلب بيانات الطلب.');
+      }
+    });
+
+    function formatTimestamp(ts) {
+        if (!ts) return 'غير محدد';
+        const date = new Date(ts);
+        const dateStr = date.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const timeStr = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        return `${dateStr} - ${timeStr}`;
+    }
+
+    function renderRequestInfo(request) {
+      requestInfo.innerHTML = `
+        <p><strong>اسم الخريج:</strong> ${request.name || 'غير متوفر'}</p>
+        <p><strong>الرقم القومي:</strong> ${request.nationalId || 'غير متوفر'}</p>
+        <p><strong>تاريخ التقديم:</strong> ${formatTimestamp(request.timestamp)}</p>
+        <p><strong>الخدمات المطلوبة:</strong> ${(request.services || []).map(s => `${s.name} (x${s.quantity})`).join('، ')}</p>`;
+    }
+
+    function renderTimeline(req, settings) {
+        const deliveryDate = new Date(req.timestamp);
+        deliveryDate.setDate(deliveryDate.getDate() + (settings.deliveryDays || 15));
+        const deliveryDateStr = deliveryDate.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const pickupTime = settings.pickupTime || '09:00';
+
+        const steps = [
+            { title: 'تسجيل الطلب من الخريج', ts: req.timestamp, icon: 'fa-paper-plane', desc: 'تم استلام طلبك بنجاح.' },
+            { title: 'استلام ومراجعة البيانات', ts: req.reviewedAt, icon: 'fa-user-check', desc: 'تمت مراجعة بيانات الطلب من قبل الإدارة.' },
+            { title: 'الطباعة والتجهيز', ts: req.completedAt, icon: 'fa-print', desc: 'تمت طباعة المستندات وتجهيزها.' },
+            { title: 'جاهز للاستلام', ts: req.completedAt, icon: 'fa-calendar-check', desc: `موعد الاستلام المتوقع هو ${deliveryDateStr} بداية من الساعة ${pickupTime}.` },
+            { title: 'تسليم الطلب للخريج', ts: req.deliveredAt, icon: 'fa-handshake', desc: 'تم تسليم الطلب بنجاح.' }
+        ];
+
+        let currentStepFound = false;
+        requestTimeline.innerHTML = steps.map(step => {
+            let status = 'pending';
+            if (step.ts && !currentStepFound) {
+                status = 'completed';
+            } else if (!step.ts && !currentStepFound) {
+                status = 'current';
+                currentStepFound = true;
+            }
+            if(req.deliveredAt) status = 'completed'; // if delivered, all steps are complete
+
+            return `
+                <div class="timeline-item ${status}">
+                    <div class="timeline-icon"><i class="fas ${step.icon}"></i></div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">${step.title}</div>
+                        <div class="timeline-date">${step.ts ? formatTimestamp(step.ts) : 'في الانتظار...'}</div>
+                        ${status === 'completed' || (status === 'current' && step.title === 'جاهز للاستلام') ? `<p class="timeline-desc">${step.desc}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function showError(message) {
+      loadingMessage.style.display = 'none';
+      requestContainer.style.display = 'none';
+      errorText.textContent = message;
+      errorMessage.style.display = 'flex';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعدادات - طلبات الخريجين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb; --secondary: #2575fc; --accent: #00d4ff;
+            --success: #2ecc71; --danger: #e74c3c;
+            --glass-bg: rgba(255, 255, 255, 0.1); --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        body {
+            font-family: 'Cairo', sans-serif; margin: 0;
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: white;
+        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .nav { background: rgba(15, 12, 41, 0.3); backdrop-filter: blur(10px); padding: 10px; display: flex; justify-content: center; gap: 15px; border-bottom: 1px solid var(--glass-border); }
+        .nav a { color: white; text-decoration: none; padding: 8px 15px; border-radius: 50px; transition: all 0.3s; font-weight: 600; }
+        .nav a:hover { background-color: var(--glass-bg); }
+        .nav a.active { background: var(--primary); }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+        .card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: var(--shadow); }
+        .card-title { margin: 0 0 20px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--glass-border); border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: white; font-family: 'Cairo', sans-serif; font-size: 1rem; }
+        .btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-success { background: linear-gradient(135deg, var(--success), #27ae60); color: white; }
+        .btn-danger { background-color: var(--danger); color: white; padding: 6px 10px; border-radius: 8px; }
+        .services-list { list-style: none; padding: 0; margin: 20px 0; }
+        .service-item { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid var(--glass-border); gap: 15px; transition: background-color 0.3s; }
+        .service-item:hover { background-color: rgba(255,255,255,0.05); }
+        .service-name { flex-grow: 1; font-weight: 600; }
+        .service-price { color: var(--accent); font-weight: bold; }
+        .add-service-form { display: flex; gap: 10px; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border); flex-wrap: wrap; }
+        .add-service-form input { flex: 1; min-width: 150px; }
+        .alert { padding: 12px; border-radius: 6px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .alert-success { background-color: rgba(46, 204, 113, 0.2); border-left: 4px solid var(--success); }
+        .alert-error { background-color: rgba(231, 76, 60, 0.2); border-left: 4px solid var(--danger); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #7f8c8d; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(20px); }
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--accent), white, var(--primary), var(--secondary));
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; 
+            animation: gradient-animation 5s ease infinite;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header"><h1>الإعدادات</h1></div>
+    
+    <div class="nav">
+        <a href="admin.html"><i class="fas fa-list"></i> الطلبات الحالية</a>
+        <a href="completed.html"><i class="fas fa-check-circle"></i> المكتملة والتسليم</a>
+        <a href="settings.html" class="active"><i class="fas fa-cog"></i> الإعدادات</a>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-calendar-alt"></i> إعدادات موعد التسليم</h2>
+            <div id="settingsMessage" style="display:none"></div>
+            <div class="form-group">
+                <label for="deliveryDays">عدد أيام الاستلام التلقائي (لحساب موعد التسليم في صفحة التسجيل)</label>
+                <input type="number" id="deliveryDays" min="1" placeholder="مثال: 15">
+            </div>
+            <div class="form-group">
+                <label for="pickupTime">وقت بدء التسليم</label>
+                <input type="time" id="pickupTime" value="09:00">
+            </div>
+            <button id="saveDeliverySettingsBtn" class="btn btn-primary"><i class="fas fa-save"></i> حفظ الإعدادات</button>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-concierge-bell"></i> إدارة الخدمات</h2>
+            <div id="servicesMessage" style="display:none"></div>
+            <ul class="services-list" id="servicesList"><li style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> جارٍ تحميل الخدمات...</li></ul>
+            <div class="add-service-form">
+                <input type="text" id="newServiceName" placeholder="اسم الخدمة الجديدة">
+                <input type="number" id="newServicePrice" placeholder="السعر (اختياري)" min="0">
+                <button id="addServiceBtn" class="btn btn-success"><i class="fas fa-plus"></i> إضافة خدمة</button>
+            </div>
+        </div>
+    </div>
+
+    <footer> تصميم وتطوير: المهندس بولس سمير </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtLojF4wpmpDua3UZa_GzlaXhTxM2ediI",
+            authDomain: "gradu-ae76f.firebaseapp.com",
+            databaseURL: "https://gradu-ae76f-default-rtdb.firebaseio.com",
+            projectId: "gradu-ae76f"
+        };
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        const settingsMessage = document.getElementById('settingsMessage');
+        const servicesMessage = document.getElementById('servicesMessage');
+
+        db.ref('settings').on('value', (snapshot) => {
+            if (snapshot.exists()) {
+                document.getElementById('deliveryDays').value = snapshot.val().deliveryDays || '15';
+                document.getElementById('pickupTime').value = snapshot.val().pickupTime || '09:00';
+            }
+        });
+
+        document.getElementById('saveDeliverySettingsBtn').addEventListener('click', () => {
+            const days = parseInt(document.getElementById('deliveryDays').value);
+            const time = document.getElementById('pickupTime').value;
+            if (!days || days < 1) { showMessage(settingsMessage, 'الرجاء إدخال عدد أيام صحيح', 'error'); return; }
+            db.ref('settings').update({ deliveryDays: days, pickupTime: time || '09:00' })
+                .then(() => showMessage(settingsMessage, 'تم حفظ الإعدادات بنجاح', 'success'))
+                .catch(err => showMessage(settingsMessage, 'حدث خطأ: ' + err.message, 'error'));
+        });
+
+        function showMessage(element, msg, type) {
+            element.className = `alert alert-${type}`;
+            element.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
+            element.style.display = 'flex';
+            setTimeout(() => { element.style.display = 'none'; }, 4000);
+        }
+
+        db.ref("services").on("value", snapshot => {
+            const servicesListEl = document.getElementById("servicesList");
+            servicesListEl.innerHTML = "";
+            if (!snapshot.exists()) { servicesListEl.innerHTML = '<li style="text-align:center; padding: 20px; opacity: 0.7;">لا توجد خدمات مضافة حالياً.</li>'; return; }
+            snapshot.forEach(child => {
+                const service = { id: child.key, ...child.val() };
+                servicesListEl.innerHTML += `
+                    <li class="service-item">
+                        <div class="service-name">${service.name}</div>
+                        <div class="service-price">${service.price ? service.price + ' ج.م' : 'مجانية'}</div>
+                        <label class="switch" title="${service.active ? 'إخفاء الخدمة' : 'إظهار الخدمة'}">
+                            <input type="checkbox" class="service-toggle" data-id="${service.id}" ${service.active ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                        <button class="btn btn-danger delete-service-btn" data-id="${service.id}" title="حذف الخدمة نهائياً"><i class="fas fa-trash"></i></button>
+                    </li>`;
+            });
+            attachServiceListeners();
+        });
+
+        function attachServiceListeners() {
+            document.querySelectorAll('.service-toggle').forEach(toggle => toggle.addEventListener('change', e => {
+                db.ref(`services/${e.target.dataset.id}/active`).set(e.target.checked);
+            }));
+            document.querySelectorAll('.delete-service-btn').forEach(btn => btn.addEventListener('click', e => {
+                const id = e.currentTarget.dataset.id;
+                if (confirm('هل أنت متأكد من حذف هذه الخدمة؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                    db.ref(`services/${id}`).remove()
+                        .then(() => showMessage(servicesMessage, 'تم حذف الخدمة بنجاح.', 'success'))
+                        .catch(err => showMessage(servicesMessage, `حدث خطأ: ${err.message}`, 'error'));
+                }
+            }));
+        }
+
+        document.getElementById("addServiceBtn").addEventListener("click", () => {
+            const name = document.getElementById('newServiceName').value.trim();
+            if (!name) { showMessage(servicesMessage, "الرجاء إدخال اسم الخدمة", 'error'); return; }
+            db.ref("services").push({
+                name: name, price: parseFloat(document.getElementById('newServicePrice').value) || 0,
+                active: true 
+            }).then(() => {
+                document.getElementById('newServiceName').value = '';
+                document.getElementById('newServicePrice').value = '';
+                showMessage(servicesMessage, 'تم إضافة الخدمة بنجاح', 'success');
+            });
+        });
+    </script>
+</body>
+</html>
