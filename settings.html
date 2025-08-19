@@ -154,7 +154,7 @@
                 servicesListEl.innerHTML += `
                     <li class="service-item">
                         <div class="service-name">${service.name}</div>
-                        <div class="service-price">${service.price ? service.price + ' ج.م' : 'مجانية'}</div>
+                        <div class="service-price">${service.price ? service.price + ' ج.م' : 'تفعيل'}</div>
                         <label class="switch" title="${service.active ? 'إخفاء الخدمة' : 'إظهار الخدمة'}">
                             <input type="checkbox" class="service-toggle" data-id="${service.id}" ${service.active ? 'checked' : ''}>
                             <span class="slider"></span>
@@ -193,4 +193,5 @@
         });
     </script>
 </body>
+
 </html>
