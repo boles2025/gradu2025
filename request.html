@@ -88,11 +88,32 @@
     .confirm-btn { padding: 12px 25px; border-radius: 50px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Cairo', sans-serif; min-width: 120px; }
     #confirmSubmitBtn { background: linear-gradient(135deg, var(--success), #27ae60); color: white; }
     #confirmCancelBtn { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid var(--glass-border); }
-    footer { text-align: center; padding: 30px 0; color: rgba(255, 255, 255, 0.7); }
     .spinner { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .required-field::after { content: " *"; color: var(--warning); }
     ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    
+    /* ===== تم تعديل وتحديث هذا الجزء ===== */
+    footer { text-align: center; padding: 30px 0; }
+    .animated-credit {
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(-45deg, var(--accent), #ffffff, var(--primary), var(--secondary), var(--accent));
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -moz-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradient-animation 8s ease infinite;
+    }
+    @keyframes gradient-animation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    /* ==================================== */
+
     @media (max-width: 768px) { .row { flex-direction: column; gap: 15px; } .confirm-btns {flex-direction: column;} }
   </style>
 </head>
@@ -180,9 +201,13 @@
   </div>
 </div>
 
+<!-- ===== تم تعديل هذا الجزء ===== -->
 <footer>
-  <div>تصميم وتطوير: <a href="mailto:bolesgaras200000@gmail.com">المهندس بولس سمير</a></div>
+  <a href="mailto:bolesgaras200000@gmail.com" class="animated-credit">
+    تصميم وتطوير: المهندس بولس سمير
+  </a>
 </footer>
+<!-- ============================= -->
 
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
@@ -260,16 +285,15 @@
     }
   }
 
-  // ===== دالة جديدة لتحويل الوقت =====
   function formatTime12Hour(timeString) {
     if (!timeString || !timeString.includes(':')) {
-      return timeString; // إرجاع القيمة كما هي إذا كانت الصيغة غير متوقعة
+      return timeString;
     }
     const [hour, minute] = timeString.split(':');
     let h = parseInt(hour, 10);
     const period = h >= 12 ? 'مساءً' : 'صباحاً';
     h = h % 12;
-    h = h ? h : 12; // الساعة '0' يجب أن تكون '12'
+    h = h ? h : 12;
     const minuteStr = String(minute).padStart(2, '0');
     return `${h}:${minuteStr} ${period}`;
   }
@@ -281,10 +305,7 @@
       const deliveryDate = new Date();
       deliveryDate.setDate(deliveryDate.getDate() + (settings.deliveryDays || 15));
       const dateStr = deliveryDate.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      
-      // ===== تم تعديل هذا السطر لاستخدام الدالة الجديدة =====
       const pickupTimeFormatted = formatTime12Hour(settings.pickupTime || '09:00');
-
       return `موعد الاستلام المتوقع: <strong>${dateStr}</strong><br>بداية من الساعة: <strong>${pickupTimeFormatted}</strong><br><br><u>مكان الاستلام:</u><br>إدارة شئون الخريجين - كلية الطب البيطري.`;
     } catch (e) {
       return 'سيتم إعلامك بموعد الاستلام عبر الهاتف أو البريد الإلكتروني.';
