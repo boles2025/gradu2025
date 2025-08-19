@@ -21,6 +21,8 @@
         .container { max-width: 1400px; margin: 20px auto; padding: 0 15px; }
         .card { background-color: white; border-radius: 12px; box-shadow: var(--shadow); padding: 25px; margin-bottom: 25px; }
         .card-title { color: var(--primary); margin: 0 0 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .filters input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo', sans-serif; box-sizing: border-box; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eee; vertical-align: middle; }
         th { background-color: #f8f9fa; font-weight: 700; color: #333; }
@@ -59,15 +61,29 @@
     
     <div class="container">
         <div class="card">
+            <h2 class="card-title">فلترة الطلبات الجاهزة للتسليم</h2>
+            <div class="filters">
+                <input type="text" id="searchCompleted" placeholder="ابحث باسم الخريج..." class="filter-input">
+                <input type="date" id="filterCompletedDate" class="filter-input" title="فلترة حسب تاريخ الإنجاز">
+            </div>
+        </div>
+        <div class="card">
             <h2 class="card-title"><i class="fas fa-check-double" style="color: var(--success);"></i> طلبات جاهزة للتسليم</h2>
             <div style="overflow-x: auto;">
                 <table id="completedTable">
-                    <thead><tr><th>رقم الطلب</th><th>اسم الخريج</th><th>الرقم القومي</th><th>تاريخ الإنجاز (الطباعة)</th><th>إجراء</th></tr></thead>
+                    <thead><tr><th>رقم الطلب</th><th>اسم الخريج</th><th>الرقم القومي</th><th>تاريخ الإنجاز</th><th>تاريخ الاستلام المتوقع</th><th>إجراء</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
         </div>
 
+        <div class="card">
+            <h2 class="card-title">فلترة الطلبات التي تم تسليمها</h2>
+            <div class="filters">
+                <input type="text" id="searchDelivered" placeholder="ابحث باسم الخريج..." class="filter-input">
+                <input type="date" id="filterDeliveredDate" class="filter-input" title="فلترة حسب تاريخ التسليم">
+            </div>
+        </div>
         <div class="card">
             <h2 class="card-title"><i class="fas fa-handshake" style="color: var(--dark);"></i> طلبات تم تسليمها (أرشيف)</h2>
             <div style="overflow-x: auto;">
@@ -94,32 +110,69 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         
+        let allCompletedRequests = [];
+        let allDeliveredRequests = [];
+        let deliverySettings = { deliveryDays: 15 };
+
         const completedTableBody = document.querySelector('#completedTable tbody');
         const deliveredTableBody = document.querySelector('#deliveredTable tbody');
 
-        function renderTable(tableBody, requests, type) {
-            tableBody.innerHTML = requests.length === 0 ? `<tr><td colspan="5" style="text-align: center; padding: 1rem;">لا توجد طلبات في هذه القائمة حالياً.</td></tr>` : '';
-            requests.forEach(req => {
-                const date = type === 'completed' ? req.completedAt : req.deliveredAt;
-                const dateStr = date ? new Date(date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
-                const actionBtn = type === 'completed' ? 
-                    `<button class="btn btn-success deliver-btn" data-id="${req.id}"><i class="fas fa-handshake"></i> تم التسليم</button>` :
-                    `<button class="btn btn-danger delete-btn" data-id="${req.id}" title="الحذف من الأرشيف نهائياً"><i class="fas fa-trash"></i> حذف</button>`;
+        function renderCompletedTable() {
+            const nameFilter = document.getElementById('searchCompleted').value.toLowerCase();
+            const dateFilter = document.getElementById('filterCompletedDate').value;
+
+            const filteredRequests = allCompletedRequests.filter(req => {
+                const nameMatch = !nameFilter || (req.name && req.name.toLowerCase().includes(nameFilter));
+                const dateMatch = !dateFilter || (req.completedAt && new Date(req.completedAt).toISOString().split('T')[0] === dateFilter);
+                return nameMatch && dateMatch;
+            });
+
+            completedTableBody.innerHTML = filteredRequests.length === 0 ? `<tr><td colspan="6" style="text-align: center; padding: 1rem;">لا توجد طلبات تطابق البحث.</td></tr>` : '';
+            
+            filteredRequests.forEach(req => {
+                const completedDateStr = req.completedAt ? new Date(req.completedAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long' }) : 'N/A';
                 
-                tableBody.innerHTML += `
+                const deliveryDate = new Date(req.timestamp);
+                deliveryDate.setDate(deliveryDate.getDate() + (parseInt(deliverySettings.deliveryDays) || 15));
+                const deliveryDateStr = deliveryDate.toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' });
+
+                completedTableBody.innerHTML += `
                     <tr>
                         <td>${req.id.substring(1, 8)}</td>
                         <td>${req.name || 'غير متوفر'}</td>
                         <td>${req.nationalId || 'N/A'}</td>
-                        <td>${dateStr}</td>
-                        <td>${actionBtn}</td>
+                        <td>${completedDateStr}</td>
+                        <td>${deliveryDateStr}</td>
+                        <td><button class="btn btn-success deliver-btn" data-id="${req.id}"><i class="fas fa-handshake"></i> تم التسليم</button></td>
                     </tr>`;
             });
-            attachActionListeners();
+            document.querySelectorAll('.deliver-btn').forEach(btn => btn.addEventListener('click', e => deliverRequest(e.currentTarget.dataset.id)));
         }
 
-        function attachActionListeners() {
-            document.querySelectorAll('.deliver-btn').forEach(btn => btn.addEventListener('click', e => deliverRequest(e.currentTarget.dataset.id)));
+        function renderDeliveredTable() {
+            const nameFilter = document.getElementById('searchDelivered').value.toLowerCase();
+            const dateFilter = document.getElementById('filterDeliveredDate').value;
+            
+            const filteredRequests = allDeliveredRequests.filter(req => {
+                const nameMatch = !nameFilter || (req.name && req.name.toLowerCase().includes(nameFilter));
+                const dateMatch = !dateFilter || (req.deliveredAt && new Date(req.deliveredAt).toISOString().split('T')[0] === dateFilter);
+                return nameMatch && dateMatch;
+            });
+
+            deliveredTableBody.innerHTML = filteredRequests.length === 0 ? `<tr><td colspan="5" style="text-align: center; padding: 1rem;">لا توجد طلبات تطابق البحث.</td></tr>` : '';
+
+            filteredRequests.forEach(req => {
+                const deliveredDateStr = req.deliveredAt ? new Date(req.deliveredAt).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }) : 'N/A';
+                
+                deliveredTableBody.innerHTML += `
+                    <tr>
+                        <td>${req.id.substring(1, 8)}</td>
+                        <td>${req.name || 'غير متوفر'}</td>
+                        <td>${req.nationalId || 'N/A'}</td>
+                        <td>${deliveredDateStr}</td>
+                        <td><button class="btn btn-danger delete-btn" data-id="${req.id}" title="الحذف من الأرشيف نهائياً"><i class="fas fa-trash"></i> حذف</button></td>
+                    </tr>`;
+            });
             document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', e => deleteDeliveredRequest(e.currentTarget.dataset.id)));
         }
 
@@ -142,17 +195,37 @@
             alert("تم حذف السجل نهائياً.");
         }
 
-        db.ref('completed_requests').on('value', snapshot => {
-            const requests = [];
-            if (snapshot.exists()) snapshot.forEach(child => requests.push({ id: child.key, ...child.val() }));
-            renderTable(completedTableBody, requests.sort((a,b) => b.completedAt - a.completedAt), 'completed');
-        });
+        // Fetch settings first
+        db.ref('settings').once('value', snapshot => { 
+            if (snapshot.exists()) {
+                deliverySettings = snapshot.val();
+            }
+        
+            // Then fetch requests
+            db.ref('completed_requests').on('value', snapshot => {
+                allCompletedRequests = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach(child => allCompletedRequests.push({ id: child.key, ...child.val() }));
+                }
+                allCompletedRequests.sort((a,b) => b.completedAt - a.completedAt);
+                renderCompletedTable();
+            });
 
-        db.ref('delivered_requests').on('value', snapshot => {
-            const requests = [];
-            if (snapshot.exists()) snapshot.forEach(child => requests.push({ id: child.key, ...child.val() }));
-            renderTable(deliveredTableBody, requests.sort((a,b) => b.deliveredAt - a.deliveredAt), 'delivered');
+            db.ref('delivered_requests').on('value', snapshot => {
+                allDeliveredRequests = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach(child => allDeliveredRequests.push({ id: child.key, ...child.val() }));
+                }
+                allDeliveredRequests.sort((a,b) => b.deliveredAt - a.deliveredAt);
+                renderDeliveredTable();
+            });
         });
+        
+        document.getElementById('searchCompleted').addEventListener('input', renderCompletedTable);
+        document.getElementById('filterCompletedDate').addEventListener('input', renderCompletedTable);
+        document.getElementById('searchDelivered').addEventListener('input', renderDeliveredTable);
+        document.getElementById('filterDeliveredDate').addEventListener('input', renderDeliveredTable);
+
     </script>
 </body>
 </html>
