@@ -35,7 +35,7 @@
         .stat-card.completed { background: linear-gradient(135deg, #27ae60, #2ecc71); }
         .stat-card.delivered { background: linear-gradient(135deg, var(--dark-blue), var(--dark-grey)); }
         .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .filter-group input, .filter-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo', sans-serif; }
+        .filter-group input, .filter-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Cairo', sans-serif; box-sizing: border-box; }
         .btn { padding: 8px 15px; border: none; border-radius: 8px; font-family: 'Cairo', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
         .btn i { transition: transform 0.3s; }
@@ -130,7 +130,7 @@
             </div>
             <div style="overflow-x: auto;">
                 <table id="requestsTable">
-                    <thead><tr><th>رقم الطلب</th><th>اسم الخريج</th><th>سنة التخرج</th><th>الخدمات</th><th>تاريخ الطلب</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                    <thead><tr><th>رقم الطلب</th><th>اسم الخريج</th><th>سنة التخرج</th><th>الخدمات</th><th>تاريخ الطلب</th><th>تاريخ الاستلام المتوقع</th><th>الحالة</th><th>إجراءات</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -201,15 +201,24 @@
         
         function renderRequests(requests) {
             const tableBody = document.querySelector('#requestsTable tbody');
-            tableBody.innerHTML = requests.length === 0 ? '<tr><td colspan="7" style="text-align: center; padding: 1rem;">لا توجد طلبات تطابق الفلتر</td></tr>' : '';
+            tableBody.innerHTML = requests.length === 0 ? '<tr><td colspan="8" style="text-align: center; padding: 1rem;">لا توجد طلبات تطابق الفلتر</td></tr>' : '';
             requests.forEach(req => {
                 const servicesStr = (req.services || []).map(s => `${s.name}(${s.quantity})`).join('، ');
                 const dateStr = new Date(req.timestamp).toLocaleDateString('ar-EG');
+                const deliveryDate = new Date(req.timestamp);
+                deliveryDate.setDate(deliveryDate.getDate() + (parseInt(deliverySettings.deliveryDays) || 15));
+                const deliveryDateStr = deliveryDate.toLocaleDateString('ar-EG');
                 const statusBadge = req.status === 'pending' ? '<span class="badge badge-warning">قيد التنفيذ</span>' : '<span class="badge badge-danger">ملغى</span>';
+                
                 tableBody.innerHTML += `
                     <tr>
-                        <td>${req.id.substring(1, 8)}</td> <td>${req.name}</td> <td>${req.graduationYear}</td>
-                        <td>${servicesStr}</td> <td>${dateStr}</td> <td>${statusBadge}</td>
+                        <td>${req.id.substring(1, 8)}</td>
+                        <td>${req.name}</td>
+                        <td>${req.graduationYear}</td>
+                        <td>${servicesStr}</td>
+                        <td>${dateStr}</td>
+                        <td>${deliveryDateStr}</td>
+                        <td>${statusBadge}</td>
                         <td class="actions-cell">
                             <button class="btn btn-primary" onclick="viewRequestDetails('${req.id}')" title="عرض التفاصيل"><i class="fas fa-eye"></i></button>
                             <button class="btn btn-success" onclick="completeRequest('${req.id}')" title="نقل للمكتملة (طباعة)"><i class="fas fa-check"></i></button>
