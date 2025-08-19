@@ -260,6 +260,20 @@
     }
   }
 
+  // ===== دالة جديدة لتحويل الوقت =====
+  function formatTime12Hour(timeString) {
+    if (!timeString || !timeString.includes(':')) {
+      return timeString; // إرجاع القيمة كما هي إذا كانت الصيغة غير متوقعة
+    }
+    const [hour, minute] = timeString.split(':');
+    let h = parseInt(hour, 10);
+    const period = h >= 12 ? 'مساءً' : 'صباحاً';
+    h = h % 12;
+    h = h ? h : 12; // الساعة '0' يجب أن تكون '12'
+    const minuteStr = String(minute).padStart(2, '0');
+    return `${h}:${minuteStr} ${period}`;
+  }
+
   async function getDeliveryText() {
     try {
       const settingsSnap = await get(ref(db, 'settings'));
@@ -267,7 +281,11 @@
       const deliveryDate = new Date();
       deliveryDate.setDate(deliveryDate.getDate() + (settings.deliveryDays || 15));
       const dateStr = deliveryDate.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      return `موعد الاستلام المتوقع: <strong>${dateStr}</strong><br>بداية من الساعة: <strong>${settings.pickupTime || '09:00 ص'}</strong><br><br><u>مكان الاستلام:</u><br>إدارة شئون الخريجين - كلية الطب البيطري.`;
+      
+      // ===== تم تعديل هذا السطر لاستخدام الدالة الجديدة =====
+      const pickupTimeFormatted = formatTime12Hour(settings.pickupTime || '09:00');
+
+      return `موعد الاستلام المتوقع: <strong>${dateStr}</strong><br>بداية من الساعة: <strong>${pickupTimeFormatted}</strong><br><br><u>مكان الاستلام:</u><br>إدارة شئون الخريجين - كلية الطب البيطري.`;
     } catch (e) {
       return 'سيتم إعلامك بموعد الاستلام عبر الهاتف أو البريد الإلكتروني.';
     }
